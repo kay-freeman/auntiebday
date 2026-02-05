@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Happy Birthday! 🍀</title>
+  <meta name="description" content="A St. Patrick’s Day-themed interactive birthday card." />
+
+  <style>
+    :root{
+      --bg1:#063b2b;
+      --bg2:#0b5b3f;
+      --paper:#fff9ef;
+      --ink:#102018;
+      --gold:#d7b65b;
+      --green:#1fb56a;
+      --green2:#0ea85a;
+      --shadow: rgba(0,0,0,.25);
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 700px at 20% 10%, rgba(255,255,255,.08), transparent 50%),
+        radial-gradient(900px 600px at 80% 30%, rgba(255,255,255,.06), transparent 55%),
+        linear-gradient(140deg, var(--bg1), var(--bg2));
+      overflow-x:hidden;
+    }
+
+    /* Subtle "sparkle dust" background */
+    .bg-dots{
+      position:fixed; inset:0;
+      pointer-events:none;
+      background-image:
+        radial-gradient(circle at 15% 20%, rgba(255,255,255,.15) 0 1px, transparent 2px),
+        radial-gradient(circle at 65% 35%, rgba(255,255,255,.12) 0 1px, transparent 2px),
+        radial-gradient(circle at 35% 75%, rgba(255,255,255,.10) 0 1px, transparent 2px),
+        radial-gradient(circle at 85% 80%, rgba(255,255,255,.10) 0 1px, transparent 2px);
+      opacity:.55;
+      filter: blur(.1px);
+    }
+
+    main{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 28px 18px 60px;
+      position:relative;
+      z-index: 1;
+    }
+
+    .banner{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      color: rgba(255,255,255,.92);
+      padding: 10px 6px 18px;
+      flex-wrap:wrap;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding: 10px 12px;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 999px;
+      backdrop-filter: blur(8px);
+      background: rgba(255,255,255,.08);
+      box-shadow: 0 10px 24px rgba(0,0,0,.12);
+      font-weight: 600;
+      letter-spacing: .2px;
+      user-select:none;
+    }
+    .badge span{ opacity:.95; }
+
+    .card{
+      position:relative;
+      border-radius: 22px;
+      background: var(--paper);
+      box-shadow:
+        0 30px 70px rgba(0,0,0,.35),
+        0 2px 0 rgba(255,255,255,.25) inset;
+      overflow:hidden;
+      border: 1px solid rgba(0,0,0,.08);
+    }
+
+    /* paper texture */
+    .card::before{
+      content:"";
+      position:absolute; inset:0;
+      background-image:
+        radial-gradient(circle at 20% 20%, rgba(0,0,0,.03) 0 2px, transparent 3px),
+        radial-gradient(circle at 70% 30%, rgba(0,0,0,.025) 0 2px, transparent 3px),
+        radial-gradient(circle at 35% 75%, rgba(0,0,0,.02) 0 2px, transparent 3px),
+        linear-gradient(0deg, rgba(0,0,0,.02), transparent 35%, rgba(0,0,0,.02));
+      opacity:.9;
+      mix-blend-mode:multiply;
+      pointer-events:none;
+    }
+
+    .card-inner{
+      padding: 34px 22px 22px;
+      position:relative;
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 18px;
+    }
+
+    @media (max-width: 860px){
+      .card-inner{ grid-template-columns: 1fr; }
+    }
+
+    .title{
+      margin:0 0 12px;
+      line-height: 1.08;
+    }
+
+    .title .en{
+      font-size: clamp(34px, 4.4vw, 54px);
+      font-weight: 900;
+      letter-spacing: .2px;
+    }
+    .title .ga{
+      display:block;
+      margin-top: 6px;
+      font-size: clamp(18px, 2.2vw, 24px);
+      font-weight: 800;
+      color: rgba(16,32,24,.78);
+    }
+
+    .subtitle{
+      margin: 10px 0 16px;
+      font-size: 16px;
+      color: rgba(16,32,24,.78);
+    }
+
+    .controls{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin: 14px 0 8px;
+    }
+
+    button{
+      border:0;
+      cursor:pointer;
+      padding: 11px 14px;
+      border-radius: 12px;
+      font-weight: 750;
+      letter-spacing:.2px;
+      transition: transform .08s ease, filter .15s ease;
+      box-shadow: 0 10px 18px rgba(0,0,0,.12);
+      user-select:none;
+    }
+    button:active{ transform: translateY(1px) scale(.99); }
+
+    .btn-green{
+      background: linear-gradient(135deg, var(--green), var(--green2));
+      color: #062114;
+    }
+    .btn-gold{
+      background: linear-gradient(135deg, #f1d78a, var(--gold));
+      color: #2a1f06;
+    }
+    .btn-ghost{
+      background: rgba(16,32,24,.06);
+      color: rgba(16,32,24,.86);
+      box-shadow: none;
+      border: 1px solid rgba(16,32,24,.14);
+    }
+
+    .message-box{
+      margin-top: 12px;
+      border-radius: 18px;
+      border: 1px dashed rgba(16,32,24,.22);
+      background: rgba(255,255,255,.6);
+      padding: 16px 14px;
+      min-height: 112px;
+      position:relative;
+    }
+
+    .type{
+      margin:0;
+      font-size: 17px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+    }
+
+    .type .cursor{
+      display:inline-block;
+      width: 10px;
+      height: 1em;
+      border-left: 2px solid rgba(16,32,24,.55);
+      transform: translateY(2px);
+      animation: blink 0.9s infinite;
+      margin-left:2px;
+    }
+    @keyframes blink{ 50%{ opacity:0; } }
+
+    .side{
+      border-radius: 18px;
+      border: 1px solid rgba(16,32,24,.10);
+      background:
+        radial-gradient(500px 300px at 25% 20%, rgba(31,181,106,.16), transparent 60%),
+        radial-gradient(420px 260px at 70% 75%, rgba(215,182,91,.14), transparent 60%),
+        rgba(255,255,255,.45);
+      padding: 16px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .side h3{
+      margin: 0 0 8px;
+      font-size: 18px;
+      letter-spacing:.2px;
+    }
+
+    .fact{
+      margin:0 0 12px;
+      color: rgba(16,32,24,.78);
+      font-size: 14.5px;
+      line-height:1.45;
+    }
+
+    .luck-meter{
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(16,32,24,.10);
+      background: rgba(255,255,255,.55);
+    }
+    .meter-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-weight: 800;
+      font-size: 14px;
+    }
+    .bar{
+      margin-top:10px;
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(16,32,24,.10);
+      overflow:hidden;
+    }
+    .fill{
+      height:100%;
+      width: 42%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--green), var(--gold));
+      transition: width .35s ease;
+    }
+
+    .tiny{
+      margin-top:10px;
+      font-size: 12.5px;
+      color: rgba(16,32,24,.7);
+    }
+
+    footer{
+      margin-top: 16px;
+      color: rgba(255,255,255,.75);
+      font-size: 13px;
+      text-align:center;
+    }
+
+    /* Floating clovers */
+    .floaties{
+      position:absolute;
+      inset:-20px -20px auto -20px;
+      height: 200px;
+      pointer-events:none;
+      opacity:.8;
+    }
+    .floater{
+      position:absolute;
+      font-size: 22px;
+      filter: drop-shadow(0 10px 10px rgba(0,0,0,.15));
+      animation: drift 9s linear infinite;
+      opacity: .75;
+    }
+    @keyframes drift{
+      from { transform: translateY(10px) translateX(0) rotate(0deg); }
+      to   { transform: translateY(170px) translateX(30px) rotate(20deg); }
+    }
+
+    /* Confetti (clovers) */
+    .confetti{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      overflow:hidden;
+      z-index: 999;
+    }
+    .confetti span{
+      position:absolute;
+      top:-20px;
+      font-size: 18px;
+      animation: fall linear forwards;
+      filter: drop-shadow(0 10px 8px rgba(0,0,0,.18));
+    }
+    @keyframes fall{
+      to { transform: translateY(calc(100vh + 40px)) rotate(360deg); opacity:0.95; }
+    }
+
+    /* Wish sparkles */
+    .sparkle{
+      position:fixed;
+      pointer-events:none;
+      font-size: 16px;
+      animation: pop 800ms ease-out forwards;
+      z-index: 1000;
+      filter: drop-shadow(0 10px 10px rgba(0,0,0,.22));
+    }
+    @keyframes pop{
+      0% { transform: translate(-50%, -50%) scale(.6); opacity:0; }
+      30%{ opacity:1; }
+      100%{ transform: translate(-50%, -80%) scale(1.15); opacity:0; }
+    }
+
+    /* Accessibility */
+    @media (prefers-reduced-motion: reduce){
+      .floater, .confetti span, .sparkle, .type .cursor{ animation: none !important; }
+      .fill{ transition:none; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-dots" aria-hidden="true"></div>
+  <div class="confetti" id="confetti" aria-hidden="true"></div>
+
+  <main>
+    <div class="banner">
+      <div class="badge" title="St. Patrick’s Day Birthday Mode">
+        <span>🍀</span>
+        <span id="headlineBadge">St. Patrick’s Day Birthday Card</span>
+      </div>
+      <div class="badge" id="todayBadge" title="Today">
+        📅 <span id="todayText">March 17</span>
+      </div>
+    </div>
+
+    <section class="card" aria-label="Birthday card">
+      <div class="floaties" aria-hidden="true">
+        <div class="floater" style="left:6%; top:10px; animation-duration: 10s;">🍀</div>
+        <div class="floater" style="left:38%; top:-8px; animation-duration: 12s; opacity:.6;">☘️</div>
+        <div class="floater" style="left:68%; top:18px; animation-duration: 9s; opacity:.65;">🍀</div>
+        <div class="floater" style="left:86%; top:-6px; animation-duration: 11s; opacity:.55;">☘️</div>
+      </div>
+
+      <div class="card-inner">
+        <div>
+          <!-- EDIT THESE 3 LINES -->
+          <h1 class="title">
+            <span class="en">Happy Birthday, <span id="auntName">Auntie</span>! 🎂🍀</span>
+            <span class="ga">Lá breithe sona duit!</span>
+          </h1>
+          <p class="subtitle" id="subLine">
+            A tech-nerd birthday card—made with love and a bit of Irish luck.
+          </p>
+
+          <div class="controls">
+            <button class="btn-green" id="btnReveal">✨ Reveal my message</button>
+            <button class="btn-gold" id="btnConfetti">🍀 Clover confetti</button>
+            <button class="btn-ghost" id="btnWish">🌟 Make a wish</button>
+          </div>
+
+          <div class="message-box" role="status" aria-live="polite">
+            <p class="type" id="typed">
+              <span id="typedText"></span><span class="cursor" aria-hidden="true"></span>
+            </p>
+          </div>
+        </div>
+
+        <aside class="side" aria-label="Irish fun panel">
+          <h3>☘️ A little Irish magic</h3>
+          <p class="fact">
+            Your cards are always hand-painted masterpieces. I’m not a painter… so I built you one instead. 😄
+          </p>
+
+          <div class="luck-meter">
+            <div class="meter-top">
+              <span>Luck Level</span>
+              <span id="luckLabel">42%</span>
+            </div>
+            <div class="bar" aria-hidden="true"><div class="fill" id="luckFill"></div></div>
+            <div class="tiny" id="luckTiny">
+              Tap “Make a wish” to boost the luck meter (scientifically verified by vibes).
+            </div>
+          </div>
+
+          <div style="margin-top:14px; font-size:14px; color:rgba(16,32,24,.78); line-height:1.45;">
+            <strong>Irish toast:</strong><br/>
+            May your pockets be heavy and your heart be light,<br/>
+            may good luck pursue you each morning and night. 🍻
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <footer>
+      Made with ☘️ + code. (Best viewed on March 17, but works any day.)
+    </footer>
+  </main>
+
+  <script>
+    // ---------------------------
+    // EASY CUSTOMIZATION SECTION
+    // ---------------------------
+    const CONFIG = {
+      auntName: "Auntie", // <-- change to her name
+      message: [
+        "Happy St. Patrick’s Day Birthday! 🍀",
+        "",
+        "Thank you for every hand-painted card you’ve ever made me.",
+        "I can’t paint like you… but I CAN code like a gremlin with a mission.",
+        "",
+        "I hope today is full of laughter, good food, and the kind of luck that finds you money in old coat pockets.",
+        "",
+        "Love you lots ❤️",
+        "— Your favorite tech nerd"
+      ].join("\n"),
+      // Irish (Gaeilge) line shown under headline:
+      gaelicLine: "Lá breithe sona duit!"
+    };
+
+    // ---------------------------
+    // INIT
+    // ---------------------------
+    const auntNameEl = document.getElementById("auntName");
+    const typedTextEl = document.getElementById("typedText");
+    const btnReveal = document.getElementById("btnReveal");
+    const btnConfetti = document.getElementById("btnConfetti");
+    const btnWish = document.getElementById("btnWish");
+    const confettiEl = document.getElementById("confetti");
+    const luckFill = document.getElementById("luckFill");
+    const luckLabel = document.getElementById("luckLabel");
+    const todayText = document.getElementById("todayText");
+
+    auntNameEl.textContent = CONFIG.auntName;
+
+    // If it's March 17 in user's locale, show it; otherwise show today's date.
+    const now = new Date();
+    const opts = { month: "long", day: "numeric" };
+    todayText.textContent = now.toLocaleDateString(undefined, opts);
+
+    let typing = false;
+    let typedDone = false;
+    let luck = 42;
+
+    function setLuck(value){
+      luck = Math.max(0, Math.min(100, value));
+      luckFill.style.width = luck + "%";
+      luckLabel.textContent = luck + "%";
+    }
+
+    function typewriter(text, speed=18){
+      if (typing) return;
+      typing = true;
+      typedTextEl.textContent = "";
+      let i = 0;
+
+      const tick = () => {
+        // Add a slightly more "handmade" cadence
+        const jitter = (Math.random() < 0.08) ? 40 : 0;
+
+        typedTextEl.textContent += text[i] ?? "";
+        i++;
+
+        if (i < text.length){
+          setTimeout(tick, speed + jitter);
+        } else {
+          typing = false;
+          typedDone = true;
+        }
+      };
+      tick();
+    }
+
+    function spawnCloverConfetti(count=70){
+      const clovers = ["🍀","☘️"];
+      const w = window.innerWidth;
+      for (let i=0; i<count; i++){
+        const s = document.createElement("span");
+        s.textContent = clovers[Math.floor(Math.random()*clovers.length)];
+        const left = Math.random() * w;
+        const duration = 3 + Math.random() * 2.5; // seconds
+        const delay = Math.random() * 0.35;
+        const size = 14 + Math.random() * 18;
+        s.style.left = left + "px";
+        s.style.fontSize = size + "px";
+        s.style.animationDuration = duration + "s";
+        s.style.animationDelay = delay + "s";
+        s.style.opacity = (0.6 + Math.random()*0.35).toFixed(2);
+        confettiEl.appendChild(s);
+
+        // cleanup
+        setTimeout(() => s.remove(), (duration + delay) * 1000 + 200);
+      }
+    }
+
+    function sparkleAt(x, y){
+      const sparkles = ["✨","🌟","💛","⭐"];
+      const s = document.createElement("div");
+      s.className = "sparkle";
+      s.textContent = sparkles[Math.floor(Math.random()*sparkles.length)];
+      s.style.left = x + "px";
+      s.style.top = y + "px";
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
+
+    // ---------------------------
+    // EVENTS
+    // ---------------------------
+    btnReveal.addEventListener("click", () => {
+      if (typedDone){
+        // replay
+        typedDone = false;
+      }
+      typewriter(CONFIG.message);
+      spawnCloverConfetti(40);
+      setLuck(luck + 8);
+    });
+
+    btnConfetti.addEventListener("click", () => {
+      spawnCloverConfetti(90);
+      setLuck(luck + 5);
+    });
+
+    btnWish.addEventListener("click", (e) => {
+      // Make a wish increases luck with sparkles
+      const boost = 7 + Math.floor(Math.random()*10);
+      setLuck(luck + boost);
+      const rect = e.target.getBoundingClientRect();
+      sparkleAt(rect.left + rect.width/2, rect.top);
+      spawnCloverConfetti(35);
+    });
+
+    // Click anywhere on the paper to make sparkles (cute!)
+    document.querySelector(".card").addEventListener("click", (e) => {
+      // Don't double-fire on button clicks
+      if (e.target.tagName.toLowerCase() === "button") return;
+      sparkleAt(e.clientX, e.clientY);
+      if (!typing && !typedDone && Math.random() < 0.35){
+        // a tiny hint of interaction even before reveal
+        setLuck(luck + 1);
+      }
+    });
+
+    // Initialize meter
+    setLuck(luck);
+
+    // Optional: auto-reveal if URL has ?reveal=1
+    const params = new URLSearchParams(location.search);
+    if (params.get("reveal") === "1"){
+      typewriter(CONFIG.message);
+      spawnCloverConfetti(60);
+      setLuck(80);
+    }
+  </script>
+</body>
+</html>
