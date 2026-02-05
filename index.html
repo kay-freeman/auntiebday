@@ -3,16 +3,19 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Happy Birthday! 🍀</title>
-  <meta name="description" content="A St. Patrick’s Day-themed interactive birthday card." />
+  <title>Happy Birthday Aunt Trisha! 🍀</title>
+
+  <!-- A-Frame for the 360 “VR-ish” escape (loads from CDN) -->
+  <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
 
   <style>
     :root{
-      --bg1:#063b2b;
+      --bg1:#052b1f;
       --bg2:#0b5b3f;
       --paper:#fff9ef;
       --ink:#102018;
       --gold:#d7b65b;
+      --gold2:#f1d78a;
       --green:#1fb56a;
       --green2:#0ea85a;
       --shadow: rgba(0,0,0,.25);
@@ -31,7 +34,6 @@
       overflow-x:hidden;
     }
 
-    /* Subtle "sparkle dust" background */
     .bg-dots{
       position:fixed; inset:0;
       pointer-events:none;
@@ -45,7 +47,7 @@
     }
 
     main{
-      max-width: 980px;
+      max-width: 1000px;
       margin: 0 auto;
       padding: 28px 18px 60px;
       position:relative;
@@ -72,19 +74,16 @@
       backdrop-filter: blur(8px);
       background: rgba(255,255,255,.08);
       box-shadow: 0 10px 24px rgba(0,0,0,.12);
-      font-weight: 600;
+      font-weight: 650;
       letter-spacing: .2px;
       user-select:none;
     }
-    .badge span{ opacity:.95; }
 
     .card{
       position:relative;
       border-radius: 22px;
       background: var(--paper);
-      box-shadow:
-        0 30px 70px rgba(0,0,0,.35),
-        0 2px 0 rgba(255,255,255,.25) inset;
+      box-shadow: 0 30px 70px rgba(0,0,0,.35), 0 2px 0 rgba(255,255,255,.25) inset;
       overflow:hidden;
       border: 1px solid rgba(0,0,0,.08);
     }
@@ -103,11 +102,38 @@
       pointer-events:none;
     }
 
+    /* “Celtic knot-ish” border accents (no images) */
+    .knot-frame{
+      position:absolute; inset:0;
+      pointer-events:none;
+      opacity:.55;
+      background:
+        repeating-linear-gradient(90deg,
+          rgba(31,181,106,.0) 0 10px,
+          rgba(31,181,106,.18) 10px 12px,
+          rgba(215,182,91,.12) 12px 14px,
+          rgba(31,181,106,.0) 14px 24px),
+        repeating-linear-gradient(0deg,
+          rgba(31,181,106,.0) 0 10px,
+          rgba(31,181,106,.18) 10px 12px,
+          rgba(215,182,91,.12) 12px 14px,
+          rgba(31,181,106,.0) 14px 24px);
+      mask:
+        linear-gradient(#000,#000) content-box,
+        linear-gradient(#000,#000);
+      -webkit-mask:
+        linear-gradient(#000,#000) content-box,
+        linear-gradient(#000,#000);
+      padding: 14px;
+      box-sizing: border-box;
+      border-radius: 22px;
+    }
+
     .card-inner{
       padding: 34px 22px 22px;
       position:relative;
       display:grid;
-      grid-template-columns: 1.2fr .8fr;
+      grid-template-columns: 1.15fr .85fr;
       gap: 18px;
     }
 
@@ -115,11 +141,7 @@
       .card-inner{ grid-template-columns: 1fr; }
     }
 
-    .title{
-      margin:0 0 12px;
-      line-height: 1.08;
-    }
-
+    .title{ margin:0 0 12px; line-height:1.08; }
     .title .en{
       font-size: clamp(34px, 4.4vw, 54px);
       font-weight: 900;
@@ -151,7 +173,7 @@
       cursor:pointer;
       padding: 11px 14px;
       border-radius: 12px;
-      font-weight: 750;
+      font-weight: 800;
       letter-spacing:.2px;
       transition: transform .08s ease, filter .15s ease;
       box-shadow: 0 10px 18px rgba(0,0,0,.12);
@@ -159,14 +181,8 @@
     }
     button:active{ transform: translateY(1px) scale(.99); }
 
-    .btn-green{
-      background: linear-gradient(135deg, var(--green), var(--green2));
-      color: #062114;
-    }
-    .btn-gold{
-      background: linear-gradient(135deg, #f1d78a, var(--gold));
-      color: #2a1f06;
-    }
+    .btn-green{ background: linear-gradient(135deg, var(--green), var(--green2)); color:#062114; }
+    .btn-gold{ background: linear-gradient(135deg, var(--gold2), var(--gold)); color:#2a1f06; }
     .btn-ghost{
       background: rgba(16,32,24,.06);
       color: rgba(16,32,24,.86);
@@ -180,17 +196,11 @@
       border: 1px dashed rgba(16,32,24,.22);
       background: rgba(255,255,255,.6);
       padding: 16px 14px;
-      min-height: 112px;
+      min-height: 122px;
       position:relative;
     }
 
-    .type{
-      margin:0;
-      font-size: 17px;
-      line-height: 1.55;
-      white-space: pre-wrap;
-    }
-
+    .type{ margin:0; font-size: 17px; line-height: 1.55; white-space: pre-wrap; }
     .type .cursor{
       display:inline-block;
       width: 10px;
@@ -214,52 +224,24 @@
       overflow:hidden;
     }
 
-    .side h3{
-      margin: 0 0 8px;
-      font-size: 18px;
-      letter-spacing:.2px;
-    }
+    .side h3{ margin: 0 0 8px; font-size: 18px; letter-spacing:.2px; }
+    .fact{ margin:0 0 12px; color: rgba(16,32,24,.78); font-size: 14.5px; line-height:1.45; }
 
-    .fact{
-      margin:0 0 12px;
-      color: rgba(16,32,24,.78);
-      font-size: 14.5px;
-      line-height:1.45;
-    }
-
-    .luck-meter{
-      margin-top: 12px;
+    .toast{
+      margin-top: 10px;
       padding: 12px;
       border-radius: 14px;
       border: 1px solid rgba(16,32,24,.10);
       background: rgba(255,255,255,.55);
-    }
-    .meter-top{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      font-weight: 800;
-      font-size: 14px;
-    }
-    .bar{
-      margin-top:10px;
-      height: 12px;
-      border-radius: 999px;
-      background: rgba(16,32,24,.10);
-      overflow:hidden;
-    }
-    .fill{
-      height:100%;
-      width: 42%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--green), var(--gold));
-      transition: width .35s ease;
+      font-size:14px;
+      color: rgba(16,32,24,.82);
+      line-height:1.45;
     }
 
     .tiny{
       margin-top:10px;
       font-size: 12.5px;
-      color: rgba(16,32,24,.7);
+      color: rgba(16,32,24,.72);
     }
 
     footer{
@@ -271,11 +253,10 @@
 
     /* Floating clovers */
     .floaties{
-      position:absolute;
-      inset:-20px -20px auto -20px;
+      position:absolute; inset:-20px -20px auto -20px;
       height: 200px;
       pointer-events:none;
-      opacity:.8;
+      opacity:.82;
     }
     .floater{
       position:absolute;
@@ -291,15 +272,12 @@
 
     /* Confetti (clovers) */
     .confetti{
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      overflow:hidden;
+      position:fixed; inset:0;
+      pointer-events:none; overflow:hidden;
       z-index: 999;
     }
     .confetti span{
-      position:absolute;
-      top:-20px;
+      position:absolute; top:-20px;
       font-size: 18px;
       animation: fall linear forwards;
       filter: drop-shadow(0 10px 8px rgba(0,0,0,.18));
@@ -308,7 +286,7 @@
       to { transform: translateY(calc(100vh + 40px)) rotate(360deg); opacity:0.95; }
     }
 
-    /* Wish sparkles */
+    /* Sparkles */
     .sparkle{
       position:fixed;
       pointer-events:none;
@@ -323,10 +301,118 @@
       100%{ transform: translate(-50%, -80%) scale(1.15); opacity:0; }
     }
 
-    /* Accessibility */
+    /* Leprechaun mini-game */
+    .leprechaun{
+      position:absolute;
+      right: 16px;
+      bottom: 18px;
+      font-size: 26px;
+      cursor:pointer;
+      user-select:none;
+      filter: drop-shadow(0 10px 10px rgba(0,0,0,.18));
+      transform: rotate(-6deg);
+      transition: transform .08s ease;
+    }
+    .leprechaun:active{ transform: rotate(-6deg) scale(.98); }
+    .lepre-bubble{
+      position:absolute;
+      right: 16px;
+      bottom: 56px;
+      max-width: 240px;
+      background: rgba(255,255,255,.85);
+      border: 1px solid rgba(16,32,24,.12);
+      border-radius: 14px;
+      padding: 10px 10px;
+      font-size: 13px;
+      color: rgba(16,32,24,.82);
+      box-shadow: 0 14px 30px rgba(0,0,0,.12);
+      display:none;
+    }
+
+    /* Modal for “Ireland Escape” */
+    .modal-backdrop{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.55);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index: 2000;
+      padding: 18px;
+    }
+    .modal{
+      width: min(980px, 100%);
+      background: rgba(255,255,255,.96);
+      border-radius: 18px;
+      border: 1px solid rgba(0,0,0,.18);
+      box-shadow: 0 30px 90px rgba(0,0,0,.45);
+      overflow:hidden;
+    }
+    .modal-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 12px 14px;
+      background: linear-gradient(135deg, rgba(31,181,106,.18), rgba(215,182,91,.16));
+      border-bottom: 1px solid rgba(0,0,0,.10);
+    }
+    .modal-title{
+      font-weight: 900;
+      letter-spacing:.2px;
+    }
+    .modal-actions{
+      display:flex; gap: 8px; flex-wrap:wrap;
+    }
+    .pill{
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(16,32,24,.14);
+      background: rgba(255,255,255,.7);
+      font-weight: 800;
+      cursor:pointer;
+      font-size: 13px;
+      user-select:none;
+    }
+    .pill.active{
+      background: linear-gradient(135deg, var(--green), var(--green2));
+      color: #062114;
+      border-color: rgba(0,0,0,.10);
+    }
+    .modal-body{
+      height: min(62vh, 520px);
+      background: #111;
+    }
+    .modal-footer{
+      padding: 10px 14px 14px;
+      color: rgba(16,32,24,.78);
+      font-size: 13px;
+    }
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      padding: 2px 6px;
+      border: 1px solid rgba(0,0,0,.20);
+      border-bottom-width: 2px;
+      border-radius: 6px;
+      background: rgba(255,255,255,.9);
+    }
+
+    /* Music banner */
+    .musicbar{
+      margin-top: 8px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      font-size: 13px;
+      color: rgba(255,255,255,.82);
+    }
+    .musicbar .note{
+      opacity:.9;
+    }
+
     @media (prefers-reduced-motion: reduce){
       .floater, .confetti span, .sparkle, .type .cursor{ animation: none !important; }
-      .fill{ transition:none; }
     }
   </style>
 </head>
@@ -335,18 +421,69 @@
   <div class="bg-dots" aria-hidden="true"></div>
   <div class="confetti" id="confetti" aria-hidden="true"></div>
 
+  <!-- Modal: Ireland Escape -->
+  <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Ireland Escape">
+      <div class="modal-header">
+        <div class="modal-title">🍀 5-Minute Ireland Escape (VR-ish)</div>
+        <div class="modal-actions">
+          <div class="pill active" data-sky="pano1">Stop 1</div>
+          <div class="pill" data-sky="pano2">Stop 2</div>
+          <div class="pill" data-sky="pano3">Stop 3</div>
+          <div class="pill" id="btnCloseModal">Close ✖</div>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <!-- A-Frame scene -->
+        <a-scene embedded vr-mode-ui="enabled: true" renderer="colorManagement: true">
+          <a-assets>
+            <!-- Put your 360 images in your repo and name them like this -->
+            <img id="pano1" src="ireland-360-1.jpg" crossorigin="anonymous">
+            <img id="pano2" src="ireland-360-2.jpg" crossorigin="anonymous">
+            <img id="pano3" src="ireland-360-3.jpg" crossorigin="anonymous">
+          </a-assets>
+
+          <a-sky id="sky" src="#pano1" rotation="0 -90 0"></a-sky>
+
+          <!-- Simple instructions text -->
+          <a-entity position="0 1.6 -2.4" text="value: Drag to look around. Scroll to zoom. Click Stop 1/2/3 to travel.; align:center; width:3.2; color:#F5F1E8"></a-entity>
+        </a-scene>
+      </div>
+
+      <div class="modal-footer">
+        Tip: On phone, try moving the device around. On desktop, click + drag. Press <span class="kbd">ESC</span> to close.
+      </div>
+    </div>
+  </div>
+
   <main>
     <div class="banner">
       <div class="badge" title="St. Patrick’s Day Birthday Mode">
-        <span>🍀</span>
-        <span id="headlineBadge">St. Patrick’s Day Birthday Card</span>
+        <span>☘️</span>
+        <span>Happy Birthday Card (Tech Nerd Edition)</span>
       </div>
+
       <div class="badge" id="todayBadge" title="Today">
         📅 <span id="todayText">March 17</span>
       </div>
+
+      <div class="musicbar">
+        <span class="note">🎻 Celtic music:</span>
+        <button class="btn-gold" id="btnMusic">Play</button>
+        <span id="musicStatus">off</span>
+      </div>
     </div>
 
+    <!-- Audio (click-to-play) -->
+    <audio id="bgm" preload="auto" loop>
+      <!-- Put a file named celtic.mp3 in your repo root -->
+      <source src="celtic.mp3" type="audio/mpeg">
+    </audio>
+
     <section class="card" aria-label="Birthday card">
+      <div class="knot-frame" aria-hidden="true"></div>
+
       <div class="floaties" aria-hidden="true">
         <div class="floater" style="left:6%; top:10px; animation-duration: 10s;">🍀</div>
         <div class="floater" style="left:38%; top:-8px; animation-duration: 12s; opacity:.6;">☘️</div>
@@ -356,110 +493,124 @@
 
       <div class="card-inner">
         <div>
-          <!-- EDIT THESE 3 LINES -->
           <h1 class="title">
-            <span class="en">Happy Birthday, <span id="auntName">Auntie</span>! 🎂🍀</span>
+            <span class="en">Happy Birthday, <span id="auntName">Aunt Trisha</span>! 🎂🍀</span>
             <span class="ga">Lá breithe sona duit!</span>
           </h1>
-          <p class="subtitle" id="subLine">
-            A tech-nerd birthday card—made with love and a bit of Irish luck.
+
+          <p class="subtitle">
+            You hand-paint the prettiest cards… I’m not a painter, so I made you one with code. 😄
           </p>
 
           <div class="controls">
             <button class="btn-green" id="btnReveal">✨ Reveal my message</button>
             <button class="btn-gold" id="btnConfetti">🍀 Clover confetti</button>
-            <button class="btn-ghost" id="btnWish">🌟 Make a wish</button>
+            <button class="btn-ghost" id="btnEscape">🧭 5-minute Ireland escape</button>
+            <button class="btn-ghost" id="btnHint">🧝 Catch the leprechaun</button>
           </div>
 
           <div class="message-box" role="status" aria-live="polite">
-            <p class="type" id="typed">
+            <p class="type">
               <span id="typedText"></span><span class="cursor" aria-hidden="true"></span>
             </p>
+
+            <div class="lepre-bubble" id="lepreBubble"></div>
+            <div class="leprechaun" id="lepre" title="Catch me if you can!">🧝‍♂️</div>
           </div>
         </div>
 
         <aside class="side" aria-label="Irish fun panel">
-          <h3>☘️ A little Irish magic</h3>
+          <h3>💚 Sweet + a little chaotic</h3>
           <p class="fact">
-            Your cards are always hand-painted masterpieces. I’m not a painter… so I built you one instead. 😄
+            I owe you approximately 9,000 smiles for all your thoughtful cards over the years.
+            Consider this my “I’m a tech nerd, I tried” love letter. ☘️
           </p>
 
-          <div class="luck-meter">
-            <div class="meter-top">
-              <span>Luck Level</span>
-              <span id="luckLabel">42%</span>
-            </div>
-            <div class="bar" aria-hidden="true"><div class="fill" id="luckFill"></div></div>
-            <div class="tiny" id="luckTiny">
-              Tap “Make a wish” to boost the luck meter (scientifically verified by vibes).
-            </div>
-          </div>
-
-          <div style="margin-top:14px; font-size:14px; color:rgba(16,32,24,.78); line-height:1.45;">
+          <div class="toast">
             <strong>Irish toast:</strong><br/>
             May your pockets be heavy and your heart be light,<br/>
             may good luck pursue you each morning and night. 🍻
+          </div>
+
+          <div class="tiny">
+            Pro tip: turn on the music, open the Ireland escape, and pretend I’ve already made it rich. 🤝
           </div>
         </aside>
       </div>
     </section>
 
     <footer>
-      Made with ☘️ + code. (Best viewed on March 17, but works any day.)
+      Made with ☘️ + code for Aunt Trisha.
     </footer>
   </main>
 
   <script>
     // ---------------------------
-    // EASY CUSTOMIZATION SECTION
+    // CUSTOMIZE THIS MESSAGE
     // ---------------------------
     const CONFIG = {
-      auntName: "Auntie", // <-- change to her name
+      auntName: "Aunt Trisha",
       message: [
-        "Happy St. Patrick’s Day Birthday! 🍀",
+        "Happy St. Patrick’s Day Birthday, Aunt Trisha! 🍀",
         "",
         "Thank you for every hand-painted card you’ve ever made me.",
-        "I can’t paint like you… but I CAN code like a gremlin with a mission.",
+        "I can’t paint like you… but I CAN code like a goblin with a mission.",
         "",
-        "I hope today is full of laughter, good food, and the kind of luck that finds you money in old coat pockets.",
+        "One of these days I’ll be rich enough to take us all to Ireland —",
+        "but in the meantime… I made you a tiny 5-minute “escape” button. 😄",
         "",
         "Love you lots ❤️",
-        "— Your favorite tech nerd"
-      ].join("\n"),
-      // Irish (Gaeilge) line shown under headline:
-      gaelicLine: "Lá breithe sona duit!"
+        "— your favorite tech nerd"
+      ].join("\\n")
     };
 
     // ---------------------------
-    // INIT
+    // ELEMENTS
     // ---------------------------
     const auntNameEl = document.getElementById("auntName");
     const typedTextEl = document.getElementById("typedText");
     const btnReveal = document.getElementById("btnReveal");
     const btnConfetti = document.getElementById("btnConfetti");
-    const btnWish = document.getElementById("btnWish");
+    const btnEscape = document.getElementById("btnEscape");
+    const btnHint = document.getElementById("btnHint");
     const confettiEl = document.getElementById("confetti");
-    const luckFill = document.getElementById("luckFill");
-    const luckLabel = document.getElementById("luckLabel");
     const todayText = document.getElementById("todayText");
+
+    // Music
+    const bgm = document.getElementById("bgm");
+    const btnMusic = document.getElementById("btnMusic");
+    const musicStatus = document.getElementById("musicStatus");
+    let musicOn = false;
+
+    // Modal / A-Frame
+    const modalBackdrop = document.getElementById("modalBackdrop");
+    const btnCloseModal = document.getElementById("btnCloseModal");
+    const pills = Array.from(document.querySelectorAll(".pill[data-sky]"));
+    const sky = document.getElementById("sky");
+
+    // Leprechaun
+    const lepre = document.getElementById("lepre");
+    const lepreBubble = document.getElementById("lepreBubble");
+    const lepreLines = [
+      "You caught me! I was guarding the birthday cake. 🎂",
+      "Trade offer: you get confetti, I get… absolutely nothing. 🤝",
+      "I’ve seen your code. It’s… powerful. Slightly alarming. ✅",
+      "If you find a pot of gold, please submit a PR."
+    ];
+
+    // Typewriter
+    let typing = false;
+    let typedDone = false;
 
     auntNameEl.textContent = CONFIG.auntName;
 
-    // If it's March 17 in user's locale, show it; otherwise show today's date.
+    // Date badge
     const now = new Date();
-    const opts = { month: "long", day: "numeric" };
-    todayText.textContent = now.toLocaleDateString(undefined, opts);
+    todayText.textContent = now.toLocaleDateString(undefined, { month: "long", day: "numeric" });
 
-    let typing = false;
-    let typedDone = false;
-    let luck = 42;
-
-    function setLuck(value){
-      luck = Math.max(0, Math.min(100, value));
-      luckFill.style.width = luck + "%";
-      luckLabel.textContent = luck + "%";
-    }
-
+    // ---------------------------
+    // FX HELPERS
+    // ---------------------------
     function typewriter(text, speed=18){
       if (typing) return;
       typing = true;
@@ -467,12 +618,9 @@
       let i = 0;
 
       const tick = () => {
-        // Add a slightly more "handmade" cadence
         const jitter = (Math.random() < 0.08) ? 40 : 0;
-
         typedTextEl.textContent += text[i] ?? "";
         i++;
-
         if (i < text.length){
           setTimeout(tick, speed + jitter);
         } else {
@@ -490,7 +638,7 @@
         const s = document.createElement("span");
         s.textContent = clovers[Math.floor(Math.random()*clovers.length)];
         const left = Math.random() * w;
-        const duration = 3 + Math.random() * 2.5; // seconds
+        const duration = 3 + Math.random() * 2.5;
         const delay = Math.random() * 0.35;
         const size = 14 + Math.random() * 18;
         s.style.left = left + "px";
@@ -499,8 +647,6 @@
         s.style.animationDelay = delay + "s";
         s.style.opacity = (0.6 + Math.random()*0.35).toFixed(2);
         confettiEl.appendChild(s);
-
-        // cleanup
         setTimeout(() => s.remove(), (duration + delay) * 1000 + 200);
       }
     }
@@ -517,52 +663,129 @@
     }
 
     // ---------------------------
-    // EVENTS
+    // MUSIC (click-to-play)
+    // ---------------------------
+    async function toggleMusic(){
+      try{
+        if (!musicOn){
+          await bgm.play();
+          musicOn = true;
+          btnMusic.textContent = "Pause";
+          musicStatus.textContent = "on";
+        } else {
+          bgm.pause();
+          musicOn = false;
+          btnMusic.textContent = "Play";
+          musicStatus.textContent = "off";
+        }
+      } catch (e){
+        // Usually means the audio file is missing OR autoplay policy blocked.
+        musicStatus.textContent = "couldn’t start (is celtic.mp3 present?)";
+      }
+    }
+    btnMusic.addEventListener("click", toggleMusic);
+
+    // ---------------------------
+    // MODAL / “IRELAND ESCAPE”
+    // ---------------------------
+    function openModal(){
+      modalBackdrop.style.display = "flex";
+      modalBackdrop.setAttribute("aria-hidden", "false");
+      spawnCloverConfetti(35);
+    }
+    function closeModal(){
+      modalBackdrop.style.display = "none";
+      modalBackdrop.setAttribute("aria-hidden", "true");
+    }
+
+    btnEscape.addEventListener("click", () => {
+      openModal();
+      sparkleAt(window.innerWidth * 0.6, 120);
+    });
+    btnCloseModal.addEventListener("click", closeModal);
+
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeModal();
+    });
+    modalBackdrop.addEventListener("click", (e) => {
+      if (e.target === modalBackdrop) closeModal();
+    });
+
+    pills.forEach(p => {
+      p.addEventListener("click", () => {
+        pills.forEach(x => x.classList.remove("active"));
+        p.classList.add("active");
+        const id = p.getAttribute("data-sky");
+        sky.setAttribute("src", "#" + id);
+        spawnCloverConfetti(20);
+      });
+    });
+
+    // ---------------------------
+    // LEPRECHAUN MINI-GAME
+    // ---------------------------
+    function moveLeprechaun(){
+      const box = document.querySelector(".message-box");
+      const r = box.getBoundingClientRect();
+      const pad = 10;
+      const x = pad + Math.random() * (r.width - 44 - pad);
+      const y = pad + Math.random() * (r.height - 70 - pad);
+
+      lepre.style.right = "auto";
+      lepre.style.bottom = "auto";
+      lepre.style.left = x + "px";
+      lepre.style.top = y + "px";
+    }
+
+    function showLepreLine(){
+      lepreBubble.style.display = "block";
+      lepreBubble.textContent = lepreLines[Math.floor(Math.random()*lepreLines.length)];
+      setTimeout(() => { lepreBubble.style.display = "none"; }, 2400);
+    }
+
+    lepre.addEventListener("click", (e) => {
+      spawnCloverConfetti(60);
+      sparkleAt(e.clientX, e.clientY);
+      showLepreLine();
+      moveLeprechaun();
+    });
+
+    btnHint.addEventListener("click", () => {
+      showLepreLine();
+      moveLeprechaun();
+      spawnCloverConfetti(15);
+    });
+
+    // ---------------------------
+    // MAIN BUTTONS
     // ---------------------------
     btnReveal.addEventListener("click", () => {
-      if (typedDone){
-        // replay
-        typedDone = false;
-      }
+      if (typedDone) typedDone = false;
       typewriter(CONFIG.message);
       spawnCloverConfetti(40);
-      setLuck(luck + 8);
+      // bonus: nudge leprechaun around when message reveals
+      setTimeout(moveLeprechaun, 500);
     });
 
     btnConfetti.addEventListener("click", () => {
       spawnCloverConfetti(90);
-      setLuck(luck + 5);
     });
 
-    btnWish.addEventListener("click", (e) => {
-      // Make a wish increases luck with sparkles
-      const boost = 7 + Math.floor(Math.random()*10);
-      setLuck(luck + boost);
-      const rect = e.target.getBoundingClientRect();
-      sparkleAt(rect.left + rect.width/2, rect.top);
-      spawnCloverConfetti(35);
-    });
-
-    // Click anywhere on the paper to make sparkles (cute!)
+    // Click sparkles on card
     document.querySelector(".card").addEventListener("click", (e) => {
-      // Don't double-fire on button clicks
       if (e.target.tagName.toLowerCase() === "button") return;
       sparkleAt(e.clientX, e.clientY);
-      if (!typing && !typedDone && Math.random() < 0.35){
-        // a tiny hint of interaction even before reveal
-        setLuck(luck + 1);
-      }
     });
 
-    // Initialize meter
-    setLuck(luck);
+    // Initialize leprechaun position
+    setTimeout(moveLeprechaun, 250);
 
-    // Optional: auto-reveal if URL has ?reveal=1
+    // Optional: auto-reveal via ?reveal=1
     const params = new URLSearchParams(location.search);
     if (params.get("reveal") === "1"){
       typewriter(CONFIG.message);
       spawnCloverConfetti(60);
-      setLuck(80);
+      setTimeout(() => openModal(), 900);
     }
   </script>
 </body>
