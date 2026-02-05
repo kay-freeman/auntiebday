@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Happy Birthday Aunt Trisha! 🍀</title>
 
-  <!-- A-Frame for the 360 “VR-ish” escape (loads from CDN) -->
+  <!-- A-Frame for the 360 “VR-ish” escape -->
   <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
 
   <style>
@@ -18,9 +18,7 @@
       --gold2:#f1d78a;
       --green:#1fb56a;
       --green2:#0ea85a;
-      --shadow: rgba(0,0,0,.25);
     }
-
     *{ box-sizing:border-box; }
     html,body{ height:100%; }
     body{
@@ -79,6 +77,16 @@
       user-select:none;
     }
 
+    .musicbar{
+      margin-top: 8px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      font-size: 13px;
+      color: rgba(255,255,255,.82);
+    }
+
     .card{
       position:relative;
       border-radius: 22px;
@@ -102,7 +110,7 @@
       pointer-events:none;
     }
 
-    /* “Celtic knot-ish” border accents (no images) */
+    /* Celtic-ish border accent */
     .knot-frame{
       position:absolute; inset:0;
       pointer-events:none;
@@ -125,7 +133,6 @@
         linear-gradient(#000,#000) content-box,
         linear-gradient(#000,#000);
       padding: 14px;
-      box-sizing: border-box;
       border-radius: 22px;
     }
 
@@ -136,7 +143,6 @@
       grid-template-columns: 1.15fr .85fr;
       gap: 18px;
     }
-
     @media (max-width: 860px){
       .card-inner{ grid-template-columns: 1fr; }
     }
@@ -154,7 +160,6 @@
       font-weight: 800;
       color: rgba(16,32,24,.78);
     }
-
     .subtitle{
       margin: 10px 0 16px;
       font-size: 16px;
@@ -196,7 +201,7 @@
       border: 1px dashed rgba(16,32,24,.22);
       background: rgba(255,255,255,.6);
       padding: 16px 14px;
-      min-height: 122px;
+      min-height: 140px;
       position:relative;
     }
 
@@ -223,7 +228,6 @@
       position:relative;
       overflow:hidden;
     }
-
     .side h3{ margin: 0 0 8px; font-size: 18px; letter-spacing:.2px; }
     .fact{ margin:0 0 12px; color: rgba(16,32,24,.78); font-size: 14.5px; line-height:1.45; }
 
@@ -237,7 +241,6 @@
       color: rgba(16,32,24,.82);
       line-height:1.45;
     }
-
     .tiny{
       margin-top:10px;
       font-size: 12.5px;
@@ -249,25 +252,6 @@
       color: rgba(255,255,255,.75);
       font-size: 13px;
       text-align:center;
-    }
-
-    /* Floating clovers */
-    .floaties{
-      position:absolute; inset:-20px -20px auto -20px;
-      height: 200px;
-      pointer-events:none;
-      opacity:.82;
-    }
-    .floater{
-      position:absolute;
-      font-size: 22px;
-      filter: drop-shadow(0 10px 10px rgba(0,0,0,.15));
-      animation: drift 9s linear infinite;
-      opacity: .75;
-    }
-    @keyframes drift{
-      from { transform: translateY(10px) translateX(0) rotate(0deg); }
-      to   { transform: translateY(170px) translateX(30px) rotate(20deg); }
     }
 
     /* Confetti (clovers) */
@@ -301,7 +285,7 @@
       100%{ transform: translate(-50%, -80%) scale(1.15); opacity:0; }
     }
 
-    /* Leprechaun mini-game */
+    /* Leprechaun */
     .leprechaun{
       position:absolute;
       right: 16px;
@@ -387,32 +371,9 @@
       color: rgba(16,32,24,.78);
       font-size: 13px;
     }
-    .kbd{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      font-size: 12px;
-      padding: 2px 6px;
-      border: 1px solid rgba(0,0,0,.20);
-      border-bottom-width: 2px;
-      border-radius: 6px;
-      background: rgba(255,255,255,.9);
-    }
-
-    /* Music banner */
-    .musicbar{
-      margin-top: 8px;
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
-      font-size: 13px;
-      color: rgba(255,255,255,.82);
-    }
-    .musicbar .note{
-      opacity:.9;
-    }
 
     @media (prefers-reduced-motion: reduce){
-      .floater, .confetti span, .sparkle, .type .cursor{ animation: none !important; }
+      .confetti span, .sparkle, .type .cursor{ animation: none !important; }
     }
   </style>
 </head>
@@ -434,44 +395,31 @@
         </div>
       </div>
 
-      <div class="modal-body">
-        <!-- A-Frame scene -->
-        <a-scene embedded vr-mode-ui="enabled: true" renderer="colorManagement: true">
-          <a-assets>
-            <!-- Put your 360 images in your repo and name them like this -->
-            <img id="pano1" src="ireland-360-1.jpg">
-            <img id="pano2" src="ireland-360-2.jpg">
-            <img id="pano3" src="ireland-360-3.jpg">
-
-          </a-assets>
-
-          <a-sky id="sky" src="#pano1"></a-sky>
-
-
-          <!-- Simple instructions text -->
-          <a-entity position="0 1.6 -2.4" text="value: Drag to look around. Scroll to zoom. Click Stop 1/2/3 to travel.; align:center; width:3.2; color:#F5F1E8"></a-entity>
-        </a-scene>
+      <div class="modal-body" id="vrMount">
+        <!-- IMPORTANT:
+             We will inject the A-Frame scene here ONLY when the modal opens.
+             This avoids the “black scene” bug caused by initializing while hidden. -->
       </div>
 
       <div class="modal-footer">
-        Tip: On phone, try moving the device around. On desktop, click + drag. Press <span class="kbd">ESC</span> to close.
+        Tip: On phone, try moving the device around. On desktop, click + drag. Press ESC to close.
       </div>
     </div>
   </div>
 
   <main>
     <div class="banner">
-      <div class="badge" title="St. Patrick’s Day Birthday Mode">
+      <div class="badge">
         <span>☘️</span>
         <span>Happy Birthday Card (Tech Nerd Edition)</span>
       </div>
 
-      <div class="badge" id="todayBadge" title="Today">
+      <div class="badge">
         📅 <span id="todayText">March 17</span>
       </div>
 
       <div class="musicbar">
-        <span class="note">🎻 Celtic music:</span>
+        <span>🎻 Celtic music:</span>
         <button class="btn-gold" id="btnMusic">Play</button>
         <span id="musicStatus">off</span>
       </div>
@@ -479,19 +427,11 @@
 
     <!-- Audio (click-to-play) -->
     <audio id="bgm" preload="auto" loop>
-      <!-- Put a file named celtic.mp3 in your repo root -->
       <source src="celtic.mp3" type="audio/mpeg">
     </audio>
 
     <section class="card" aria-label="Birthday card">
       <div class="knot-frame" aria-hidden="true"></div>
-
-      <div class="floaties" aria-hidden="true">
-        <div class="floater" style="left:6%; top:10px; animation-duration: 10s;">🍀</div>
-        <div class="floater" style="left:38%; top:-8px; animation-duration: 12s; opacity:.6;">☘️</div>
-        <div class="floater" style="left:68%; top:18px; animation-duration: 9s; opacity:.65;">🍀</div>
-        <div class="floater" style="left:86%; top:-6px; animation-duration: 11s; opacity:.55;">☘️</div>
-      </div>
 
       <div class="card-inner">
         <div>
@@ -552,6 +492,7 @@
     // ---------------------------
     const CONFIG = {
       auntName: "Aunt Trisha",
+      // IMPORTANT: join with "\n" (real newlines), not "\\n"
       message: [
         "Happy St. Patrick’s Day Birthday, Aunt Trisha! 🍀",
         "",
@@ -563,7 +504,7 @@
         "",
         "Love you lots ❤️",
         "— your favorite tech nerd"
-      ].join("\\n")
+      ].join("\n")
     };
 
     // ---------------------------
@@ -584,11 +525,12 @@
     const musicStatus = document.getElementById("musicStatus");
     let musicOn = false;
 
-    // Modal / A-Frame
+    // Modal / VR
     const modalBackdrop = document.getElementById("modalBackdrop");
     const btnCloseModal = document.getElementById("btnCloseModal");
     const pills = Array.from(document.querySelectorAll(".pill[data-sky]"));
-    const sky = document.getElementById("sky");
+    const vrMount = document.getElementById("vrMount");
+    let sceneInjected = false;
 
     // Leprechaun
     const lepre = document.getElementById("lepre");
@@ -681,20 +623,71 @@
           musicStatus.textContent = "off";
         }
       } catch (e){
-        // Usually means the audio file is missing OR autoplay policy blocked.
         musicStatus.textContent = "couldn’t start (is celtic.mp3 present?)";
       }
     }
     btnMusic.addEventListener("click", toggleMusic);
 
     // ---------------------------
-    // MODAL / “IRELAND ESCAPE”
+    // VR: inject scene on open (prevents black screen)
+    // ---------------------------
+    function injectSceneIfNeeded(){
+      if (sceneInjected) return;
+
+      vrMount.innerHTML = `
+        <a-scene embedded vr-mode-ui="enabled: true">
+          <a-assets>
+            <img id="pano1" src="ireland-360-1.jpg">
+            <img id="pano2" src="ireland-360-2.jpg">
+            <img id="pano3" src="ireland-360-3.jpg">
+          </a-assets>
+
+          <a-sky id="sky" src="#pano1"></a-sky>
+          <a-camera position="0 1.6 0" look-controls="enabled:true"></a-camera>
+        </a-scene>
+      `;
+
+      sceneInjected = true;
+
+      // After injection, force a resize so the renderer matches the visible modal size.
+      setTimeout(() => {
+        const scene = vrMount.querySelector("a-scene");
+        if (!scene) return;
+        scene.dispatchEvent(new Event("resize"));
+        // A-Frame sets up renderer asynchronously; retry a couple times.
+        let tries = 0;
+        const nudge = () => {
+          tries++;
+          const s = vrMount.querySelector("a-scene");
+          if (s && s.renderer){
+            s.renderer.setSize(s.clientWidth, s.clientHeight);
+          }
+          if (tries < 5) setTimeout(nudge, 120);
+        };
+        nudge();
+      }, 150);
+    }
+
+    function setSky(id){
+      const sky = vrMount.querySelector("#sky");
+      if (!sky) return;
+      sky.setAttribute("src", "#" + id);
+    }
+
+    // ---------------------------
+    // MODAL
     // ---------------------------
     function openModal(){
       modalBackdrop.style.display = "flex";
       modalBackdrop.setAttribute("aria-hidden", "false");
-      spawnCloverConfetti(35);
+      spawnCloverConfetti(25);
+
+      injectSceneIfNeeded();
+      // Ensure current selected pill is applied
+      const active = document.querySelector(".pill.active[data-sky]");
+      if (active) setSky(active.getAttribute("data-sky"));
     }
+
     function closeModal(){
       modalBackdrop.style.display = "none";
       modalBackdrop.setAttribute("aria-hidden", "true");
@@ -704,11 +697,13 @@
       openModal();
       sparkleAt(window.innerWidth * 0.6, 120);
     });
+
     btnCloseModal.addEventListener("click", closeModal);
 
     window.addEventListener("keydown", (e) => {
       if (e.key === "Escape") closeModal();
     });
+
     modalBackdrop.addEventListener("click", (e) => {
       if (e.target === modalBackdrop) closeModal();
     });
@@ -718,8 +713,8 @@
         pills.forEach(x => x.classList.remove("active"));
         p.classList.add("active");
         const id = p.getAttribute("data-sky");
-        sky.setAttribute("src", "#" + id);
-        spawnCloverConfetti(20);
+        setSky(id);
+        spawnCloverConfetti(15);
       });
     });
 
@@ -746,7 +741,7 @@
     }
 
     lepre.addEventListener("click", (e) => {
-      spawnCloverConfetti(60);
+      spawnCloverConfetti(55);
       sparkleAt(e.clientX, e.clientY);
       showLepreLine();
       moveLeprechaun();
@@ -755,7 +750,7 @@
     btnHint.addEventListener("click", () => {
       showLepreLine();
       moveLeprechaun();
-      spawnCloverConfetti(15);
+      spawnCloverConfetti(12);
     });
 
     // ---------------------------
@@ -764,9 +759,8 @@
     btnReveal.addEventListener("click", () => {
       if (typedDone) typedDone = false;
       typewriter(CONFIG.message);
-      spawnCloverConfetti(40);
-      // bonus: nudge leprechaun around when message reveals
-      setTimeout(moveLeprechaun, 500);
+      spawnCloverConfetti(35);
+      setTimeout(moveLeprechaun, 350);
     });
 
     btnConfetti.addEventListener("click", () => {
